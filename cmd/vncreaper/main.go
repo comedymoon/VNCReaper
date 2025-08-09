@@ -15,6 +15,8 @@ import (
 	"github.com/comedymoon/VNCReaper/internal/banner"
 )
 
+import _ "github.com/comedymoon/VNCReaper/internal/cves"
+
 func main() {
 	targetFile := flag.String("i", "targets.txt", "Input file with target IPs or CIDRs")
 	outputFile := flag.String("o", "results.json", "Output file for scan results")
@@ -79,6 +81,14 @@ func main() {
 				if *verbose {
 					fmt.Printf("FOUND VNC: %s:%s (%s)\n", result.IP, result.Port, result.Protocol)
 				}
+
+				// Run CVEs in separate goroutine
+				go func(r types.ScanResult) {
+					hits := cves.RunAll(r)
+					for _, h := range hits {
+						fmt.Printf("[CVE] %s -> %s\n", r.IP, h)
+					}
+				}(result)
 			}
 		}
 		writerDone <- true
