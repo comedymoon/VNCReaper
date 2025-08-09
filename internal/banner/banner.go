@@ -1,6 +1,9 @@
 package banner
 
-import "fmt"
+import (
+    "fmt"
+    "github.com/fatih/color"
+)
 
 const BannerText = `
          _       _______ _______ _______ _______ _______ _______ _______ 
@@ -11,12 +14,16 @@ const BannerText = `
  \ \_/ /| | \   | |     | (\ (  | (     | (   ) | (     | (     | (\ (   
   \   / | )  \  | (____/\ ) \ \_| (____/\ )   ( | )     | (____/\ ) \ \__
    \_/  |/    )_|_______//   \__(_______//     \|/      (_______//   \__/
-                                                                         
 `
 
-const Author = "Made by tg:@nocommand/@lostcmd with ❤"
-const Version = "v1.1"
+var Version = "v1.1"
+var Author = "tg:@nocommand/@lostcmd ❤"
 
 func Print() {
-    fmt.Printf("%s\nVNCReaper %s by %s\n\n", BannerText, Version, Author)
+    cyan := color.New(color.FgCyan).SprintFunc()
+    yellow := color.New(color.FgYellow).SprintFunc()
+    green := color.New(color.FgGreen).SprintFunc()
+
+    fmt.Println(cyan(BannerText))
+    fmt.Printf("%s %s by %s\n\n", yellow("VNCReaper"), Version, green(Author))
 }
