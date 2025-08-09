@@ -26,4 +26,7 @@ bin/
 # Go workspace file
 go.work
 
+# Files for testing
+targets.txt
+
 # End of https://www.toptal.com/developers/gitignore/api/go
