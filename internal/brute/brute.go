@@ -5,7 +5,7 @@ import (
 	"log"
 	"time"
 
-	vnc "github.com/amitbet/vnc2video"
+	vnc "github.com/mitchellh/go-vnc"
 	"github.com/comedymoon/VNCReaper/internal/types"
 )
 
@@ -60,7 +60,7 @@ func (bm *BruteManager) tryPassword(addr string, password string) bool {
 		},
 	}
 
-	conn, err := vnc.Dial(addr, cfg)
+	conn, err := vnc.Dial("tcp", addr, cfg)
 	if err != nil {
 		return false
 	}
