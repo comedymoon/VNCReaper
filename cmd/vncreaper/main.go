@@ -14,6 +14,7 @@ import (
 	"github.com/comedymoon/VNCReaper/internal/gui"
 	"github.com/comedymoon/VNCReaper/internal/banner"
 	"github.com/comedymoon/VNCReaper/internal/cves"
+	"github.com/comedymoon/VNCReaper/internal/brute"
 )
 
 func main() {
@@ -28,6 +29,8 @@ func main() {
 	httpOnly := flag.Bool("http-only", false, "Skip TCP banner checks, HTTP/noVNC only")
 	noFavicon := flag.Bool("no-favicon", false, "Skip favicon hash calculation (faster)")
 	novncDisabled := flag.Bool("novnc-disabled", false, "Disable noVNC detection")
+	var bruteMode = flag.Bool("brute", false, "Enable brute-force mode")
+	var brutePwdList = flag.String("brutepwdlist", "", "Path to password list file")
 	flag.Parse()
 	
 	banner.Print()
@@ -36,6 +39,21 @@ func main() {
 		fmt.Printf("Error: target file %s not found.\n\n", *targetFile)
 		flag.Usage()
 		os.Exit(1)
+	}
+	
+	var bm *brute.BruteManager
+	if *bruteMode {
+		if *brutePwdList == "" {
+			fmt.Println("[!] --brute requires --brutepwdlist <file>")
+			os.Exit(1)
+		}
+		pwds, err := os.ReadFile(*brutePwdList)
+		if err != nil {
+			fmt.Printf("[!] Could not read password list: %v\n", err)
+			os.Exit(1)
+		}
+		bm = brute.NewBruteManager(strings.Split(strings.ReplaceAll(string(pwds), "\r\n", "\n"), "\n"))
+		fmt.Printf("[*] Brute mode enabled, loaded %d passwords\n", len(bm.passwords))
 	}
 
 	if *guiMode {
@@ -88,6 +106,10 @@ func main() {
 						fmt.Printf("[CVE] %s -> %s\n", r.IP, h)
 					}
 				}(result)
+				
+				if *bruteMode && bm != nil {
+					go bm.TryAll(result)
+				}
 			}
 		}
 		writerDone <- true
