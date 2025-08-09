@@ -3,8 +3,8 @@ module github.com/comedymoon/VNCReaper
 go 1.24.5
 
 require (
-	github.com/amitbet/vnc2video v0.0.0-20190616012314-9d50b9dab1d9
 	github.com/fatih/color v1.18.0
+	github.com/mitchellh/go-vnc v0.0.0-20150629162542-723ed9867aed
 )
 
 require (
