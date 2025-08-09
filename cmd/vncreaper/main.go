@@ -12,6 +12,7 @@ import (
 	"github.com/comedymoon/VNCReaper/internal/scanner"
 	"github.com/comedymoon/VNCReaper/internal/types"
 	"github.com/comedymoon/VNCReaper/internal/gui"
+	"github.com/comedymoon/VNCReaper/internal/banner"
 )
 
 func main() {
@@ -27,6 +28,8 @@ func main() {
 	noFavicon := flag.Bool("no-favicon", false, "Skip favicon hash calculation (faster)")
 	novncDisabled := flag.Bool("novnc-disabled", false, "Disable noVNC detection")
 	flag.Parse()
+	
+	banner.Print()
 
 	if _, err := os.Stat(*targetFile); os.IsNotExist(err) {
 		fmt.Printf("Error: target file %s not found.\n\n", *targetFile)
