@@ -10,18 +10,16 @@ import (
     "github.com/comedymoon/VNCReaper/internal/types"
 )
 
-// BruteManager holds the password list and retry logic
 type BruteManager struct {
-    passwords []string
+    Passwords []string // was: passwords
     retries   map[string]int
     maxRetry  int
     waitTime  time.Duration
 }
 
-// NewBruteManager creates a new manager
 func NewBruteManager(passwords []string) *BruteManager {
     return &BruteManager{
-        passwords: passwords,
+        Passwords: passwords,
         retries:   make(map[string]int),
         maxRetry:  3,
         waitTime:  10 * time.Second,
@@ -37,7 +35,7 @@ func (bm *BruteManager) TryAll(target types.ScanResult) {
         return
     }
 
-    for _, pwd := range bm.passwords {
+    for _, pwd := range bm.Passwords {
         ok := bm.tryPassword(addr, pwd)
         if ok {
             log.Printf("[BRUTE] SUCCESS %s password: %s", addr, pwd)

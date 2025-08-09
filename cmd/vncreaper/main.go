@@ -8,6 +8,7 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
+	"strings"
 
 	"github.com/comedymoon/VNCReaper/internal/scanner"
 	"github.com/comedymoon/VNCReaper/internal/types"
@@ -53,7 +54,7 @@ func main() {
 			os.Exit(1)
 		}
 		bm = brute.NewBruteManager(strings.Split(strings.ReplaceAll(string(pwds), "\r\n", "\n"), "\n"))
-		fmt.Printf("[*] Brute mode enabled, loaded %d passwords\n", len(bm.passwords))
+		fmt.Printf("[*] Brute mode enabled, loaded %d passwords\n", len(bm.Passwords))
 	}
 
 	if *guiMode {
