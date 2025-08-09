@@ -54,16 +54,16 @@ func (bm *BruteManager) TryAll(target types.ScanResult) {
 }
 
 func (bm *BruteManager) tryPassword(addr string, password string) bool {
-	cfg := &vnc.ClientConfig{
-		Auth: []vnc.ClientAuth{
-			&vnc.PasswordAuth{Password: password},
-		},
-	}
+    cfg := &vnc.ClientConfig{
+        SecurityHandlers: []vnc.SecurityHandler{
+            &vnc.PasswordSecurityHandler{Password: password},
+        },
+    }
 
-	conn, err := vnc.Dial("tcp", addr, cfg)
-	if err != nil {
-		return false
-	}
-	defer conn.Close()
-	return true
+    conn, err := vnc.Client("tcp", addr, cfg)
+    if err != nil {
+        return false
+    }
+    defer conn.Close()
+    return true
 }
