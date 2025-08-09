@@ -2,7 +2,10 @@ module github.com/comedymoon/VNCReaper
 
 go 1.24.5
 
-require github.com/fatih/color v1.18.0
+require (
+	github.com/amitbet/vnc2video v0.0.0-20190616012314-9d50b9dab1d9
+	github.com/fatih/color v1.18.0
+)
 
 require (
 	github.com/mattn/go-colorable v0.1.13 // indirect

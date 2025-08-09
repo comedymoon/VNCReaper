@@ -1,5 +1,8 @@
+github.com/amitbet/vnc2video v0.0.0-20190616012314-9d50b9dab1d9 h1:vYU4bpShNx2qwirTqqnGZ2wYicExu4q2lQNP4u7xafM=
+github.com/amitbet/vnc2video v0.0.0-20190616012314-9d50b9dab1d9/go.mod h1:zc4FYPGD82PqOVHtzkQiz7zHHxumVoVQ4Ij0RzvOIJQ=
 github.com/fatih/color v1.18.0 h1:S8gINlzdQ840/4pfAwic/ZE0djQEH3wM94VfqLTZcOM=
 github.com/fatih/color v1.18.0/go.mod h1:4FelSpRwEGDpQ12mAdzqdOukCy4u8WUtOY6lkT/6HfU=
+github.com/icza/mjpeg v0.0.0-20170217094447-85dfbe473743/go.mod h1:Eja3x31oRrEOzl6ihhsxY23gXaTYWLP3Gwj5nMAJ7m0=
 github.com/mattn/go-colorable v0.1.13 h1:fFA4WZxdEF4tXPZVKMLwD8oUnCTTo08duU7wxecdEvA=
 github.com/mattn/go-colorable v0.1.13/go.mod h1:7S9/ev0klgBDR4GtXTXX8a3vIGJpMovkB8vQcUbaXHg=
 github.com/mattn/go-isatty v0.0.16/go.mod h1:kYGgaQfpe5nmfYZH+SKPsOc2e4SrIfOl2e/yFXSvRLM=
