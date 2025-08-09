@@ -12,9 +12,9 @@
 
 ---
 
-### **VNCReaper**
+# **VNCReaper**
 
-# *Tool for scanning/finding open VNCs on the internet.*
+*Tool for scanning/finding open VNCs on the internet.*
 
 VNCReaper is a high-speed scanner for finding VNC and noVNC services across IP ranges.  
 It’s written in Go for speed, efficiency, and the ability to handle huge amounts of targets without choking.
