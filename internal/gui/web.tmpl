@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>VNCReaper Scan Results</title>
+<style>
+	body {
+	  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+	  color: #e0e6f1;
+	  margin: 20px;
+	}
+
+	h2 {
+	  text-align: center;
+	  font-weight: 700;
+	  margin-bottom: 20px;
+	  letter-spacing: 1.2px;
+	  color: #a9cce3;
+	  text-shadow: 0 0 5px #3b5998;
+	}
+
+	input[type="text"] {
+	  display: block;
+	  margin: 0 auto 20px auto;
+	  padding: 10px 15px;
+	  width: 350px;
+	  border-radius: 25px;
+	  border: none;
+	  box-shadow: 0 0 8px rgba(255, 255, 255, 0.15);
+	  background-color: #1e2e3e;
+	  color: #d6d9de;
+	  font-size: 16px;
+	  transition: box-shadow 0.3s ease;
+	}
+	input[type="text"]:focus {
+	  outline: none;
+	  box-shadow: 0 0 12px #5dade2;
+	}
+
+	table {
+	  width: 100%;
+	  border-collapse: separate;
+	  border-spacing: 0 10px;
+	  background: rgba(255, 255, 255, 0.05);
+	  border-radius: 10px;
+	  overflow: hidden;
+	  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+	}
+
+	th, td {
+	  padding: 12px 20px;
+	  text-align: left;
+	}
+
+	th {
+	  background: #2e4664;
+	  color: #a9cce3;
+	  font-weight: 600;
+	  cursor: pointer;
+	  user-select: none;
+	  transition: background-color 0.3s ease;
+	  border-bottom: 2px solid #4b6e8a;
+	}
+
+	th:hover {
+	  background-color: #3e5e8a;
+	}
+
+	tbody tr {
+	  background: #1e2e3e;
+	  transition: background-color 0.3s ease;
+	  border-radius: 8px;
+	  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+	}
+
+	tbody tr:hover {
+	  background-color: #2c3e55;
+	}
+
+	a {
+	  color: #5dade2;
+	  text-decoration: none;
+	  transition: color 0.3s ease;
+	}
+
+	a:hover {
+	  color: #82c0ff;
+	  text-decoration: underline;
+	}
+
+	button {
+	  background-color: #2e4664;
+	  color: #a9cce3;
+	  border: none;
+	  padding: 8px 18px;
+	  margin: 0 5px 10px 0;
+	  border-radius: 20px;
+	  font-weight: 600;
+	  cursor: pointer;
+	  box-shadow: 0 4px 12px rgba(46,70,100,0.5);
+	  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+	  user-select: none;
+	}
+
+	button:disabled {
+	  opacity: 0.5;
+	  cursor: default;
+	  box-shadow: none;
+	}
+
+	button:hover:not(:disabled) {
+	  background-color: #3e5e8a;
+	  box-shadow: 0 6px 18px rgba(62,94,138,0.7);
+	}
+
+	.pagination {
+	  text-align: center;
+	  margin-top: 15px;
+	  user-select: none;
+	  font-size: 0;
+	}
+	.pagination button {
+	  font-size: 14px;
+	}
+</style>
+</head>
+<body>
+<h2>VNCReaper Scan Results</h2>
+
+<input type="text" id="searchInput" placeholder="Search IP, Port, Protocol..." oninput="reloadTable()" />
+
+<table>
+<thead>
+<tr>
+	<th onclick="sortTable('IP')">IP ▲▼</th>
+	<th onclick="sortTable('Port')">Port ▲▼</th>
+	<th onclick="sortTable('Protocol')">Protocol ▲▼</th>
+	<th>Banner</th>
+	<th>Title</th>
+	<th>Favicon</th>
+	<th onclick="sortTable('Timestamp')">Time ▲▼</th>
+</tr>
+</thead>
+<tbody id="tableBody"></tbody>
+</table>
+
+<div class="pagination" id="pagination"></div>
+
+<script>
+	let results = [];
+	let currentPage = 1;
+	const pageSize = 50;
+	let currentSort = {column: 'IP', asc: true};
+
+	function fetchResults() {
+		fetch('/data')
+			.then(response => response.json())
+			.then(data => {
+				results = data;
+				renderTable();
+			})
+			.catch(e => {
+				document.getElementById('tableBody').innerHTML = '<tr><td colspan="7">Failed to load data</td></tr>';
+			});
+	}
+
+	function reloadTable() {
+		currentPage = 1;
+		renderTable();
+	}
+
+	function compare(a, b, column, asc) {
+		let valA = a[column] || '';
+		let valB = b[column] || '';
+		if(column === 'Port') {
+			valA = parseInt(valA) || 0;
+			valB = parseInt(valB) || 0;
+		} else if(column === 'Timestamp') {
+			valA = new Date(valA);
+			valB = new Date(valB);
+		} else {
+			valA = valA.toLowerCase();
+			valB = valB.toLowerCase();
+		}
+		if(valA < valB) return asc ? -1 : 1;
+		if(valA > valB) return asc ? 1 : -1;
+		return 0;
+	}
+
+	function sortTable(column) {
+		if(currentSort.column === column) {
+			currentSort.asc = !currentSort.asc;
+		} else {
+			currentSort.column = column;
+			currentSort.asc = true;
+		}
+		renderTable();
+	}
+
+	function renderTable() {
+		let filtered = results.filter(r => {
+			const s = document.getElementById('searchInput').value.toLowerCase();
+			return r.IP.toLowerCase().includes(s) || r.Port.includes(s) || (r.Protocol && r.Protocol.toLowerCase().includes(s));
+		});
+		filtered.sort((a, b) => compare(a, b, currentSort.column, currentSort.asc));
+		const totalPages = Math.ceil(filtered.length / pageSize);
+		if(currentPage > totalPages) currentPage = totalPages > 0 ? totalPages : 1;
+
+		let start = (currentPage - 1) * pageSize;
+		let pageData = filtered.slice(start, start + pageSize);
+
+		const tbody = document.getElementById('tableBody');
+		tbody.innerHTML = '';
+		if(pageData.length === 0) {
+			tbody.innerHTML = '<tr><td colspan="7">No results found</td></tr>';
+		} else {
+			for(let r of pageData) {
+				tbody.innerHTML +=
+					'<tr>' +
+					'<td><a href="http://' + r.IP + ':' + r.Port + '" target="_blank">' + r.IP + '</a></td>' +
+					'<td>' + r.Port + '</td>' +
+					'<td>' + (r.Protocol || '') + '</td>' +
+					'<td>' + (r.Banner || '') + '</td>' +
+					'<td>' + (r.Title || '') + '</td>' +
+					'<td>' + (r.Favicon || '') + '</td>' +
+					'<td>' + (r.Timestamp || '') + '</td>' +
+					'</tr>';
+			}
+		}
+		// Pagination buttons
+		const pag = document.getElementById('pagination');
+		pag.innerHTML = '';
+		if(totalPages > 1) {
+			for(let i=1; i<=totalPages; i++) {
+				const btn = document.createElement('button');
+				btn.textContent = i;
+				btn.disabled = i === currentPage;
+				btn.onclick = () => { currentPage = i; renderTable(); };
+				pag.appendChild(btn);
+			}
+		}
+	}
+
+	// Initial load
+	fetchResults();
+
+	// Auto refresh every 10 seconds
+	setInterval(fetchResults, 10000);
+</script>
+
+</body>
+</html>
