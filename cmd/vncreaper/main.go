@@ -13,9 +13,8 @@ import (
 	"github.com/comedymoon/VNCReaper/internal/types"
 	"github.com/comedymoon/VNCReaper/internal/gui"
 	"github.com/comedymoon/VNCReaper/internal/banner"
+	"github.com/comedymoon/VNCReaper/internal/cves"
 )
-
-import _ "github.com/comedymoon/VNCReaper/internal/cves"
 
 func main() {
 	targetFile := flag.String("i", "targets.txt", "Input file with target IPs or CIDRs")
